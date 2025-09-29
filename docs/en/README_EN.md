@@ -57,19 +57,3 @@ If you like this project, don’t forget to give it a ⭐ on GitHub!
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
-
-#### Discord en el Perfil
-![Discord on Profile](https://raw.githubusercontent.com/printhelloworldasdas/ECSR-Pro/main/assets/screenshot2.png)
-
----
-
-### ⭐ Contador de Estrellas
-
-Si te gusta este proyecto, ¡no olvides darle una ⭐ en GitHub!  
-[![GitHub stars](https://img.shields.io/github/stars/printhelloworldasdas/ECSR-Pro?style=social)](https://github.com/printhelloworldasdas/ECSR-Pro/stargazers)
-
----
-
-### 📄 Licencia
-
-Este proyecto está licenciado bajo la [Licencia MIT](LICENSE).
