@@ -32,26 +32,33 @@ document.getElementById("saveBg").addEventListener("click", () => {
   reader.onload = function(e) {
     const fileData = e.target.result;
     
-    // Verificar tamaño de la data URL (chrome.storage.sync tiene límite de 8KB por item)
-    const dataSize = new Blob([fileData]).size;
-    
-    if (dataSize > 102400) { // 100KB (limite seguro para sync)
-      alert("⚠️ Advertencia: El archivo es grande. Considera usar chrome.storage.local o una URL externa.");
-      
-      // Guardar en local storage (sin límite de 8KB)
-      chrome.storage.local.set({ background: fileData }, () => {
-        alert("✅ Fondo guardado en almacenamiento local (recarga ECSR)");
-        console.log("📦 Tipo detectado:", file.type);
-        console.log("📏 Tamaño:", (file.size / 1024).toFixed(2), "KB");
+    // 🗑️ PRIMERO: Eliminar fondos anteriores de ambos storages
+    chrome.storage.sync.remove("background", () => {
+      chrome.storage.local.remove("background", () => {
+        
+        // Verificar tamaño de la data URL
+        const dataSize = new Blob([fileData]).size;
+        
+        if (dataSize > 102400) { // 100KB
+          // Guardar en local storage
+          chrome.storage.local.set({ background: fileData }, () => {
+            alert("✅ Fondo reemplazado y guardado en almacenamiento local");
+            console.log("🔄 Fondo anterior eliminado");
+            console.log("📦 Tipo detectado:", file.type);
+            console.log("📏 Tamaño:", (file.size / 1024).toFixed(2), "KB");
+          });
+        } else {
+          // Guardar en sync storage
+          chrome.storage.sync.set({ background: fileData }, () => {
+            alert("✅ Fondo reemplazado y sincronizado");
+            console.log("🔄 Fondo anterior eliminado");
+            console.log("📦 Tipo detectado:", file.type);
+            console.log("📏 Tamaño:", (file.size / 1024).toFixed(2), "KB");
+          });
+        }
+        
       });
-    } else {
-      // Guardar en sync storage (sincroniza entre dispositivos)
-      chrome.storage.sync.set({ background: fileData }, () => {
-        alert("✅ Fondo guardado y sincronizado (recarga ECSR)");
-        console.log("📦 Tipo detectado:", file.type);
-        console.log("📏 Tamaño:", (file.size / 1024).toFixed(2), "KB");
-      });
-    }
+    });
   };
   
   reader.onerror = function() {
