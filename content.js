@@ -12,13 +12,13 @@ if (!bgContainer) {
   bgContainer.style.left = "0";
   bgContainer.style.width = "100%";
   bgContainer.style.height = "100%";
-  bgContainer.style.zIndex = "-9999"; // detrás de todo
+  bgContainer.style.zIndex = "-9999";
   bgContainer.style.pointerEvents = "none";
   bgContainer.style.overflow = "hidden";
   document.body.prepend(bgContainer);
 }
 
-// 🔹 Función para aplicar fondo - CORREGIDA
+// 🔹 Función para aplicar fondo - MEJORADA
 function applyBackground(bgData) {
   if (!bgData) return;
 
@@ -28,47 +28,100 @@ function applyBackground(bgData) {
   bgContainer.style.backgroundSize = "";
   bgContainer.style.backgroundPosition = "";
 
-  // Detectar tipo de archivo
-  if (bgData.startsWith("data:video") || 
-      bgData.includes(".mp4") || 
-      bgData.includes(".webm") || 
-      bgData.includes(".ogg")) {
+  // Normalizar la URL para mejor detección
+  const dataLower = bgData.toLowerCase();
+  
+  // 1️⃣ Detectar VIDEOS (MP4, WebM, OGG)
+  if (dataLower.startsWith("data:video") || 
+      dataLower.endsWith(".mp4") || 
+      dataLower.endsWith(".webm") || 
+      dataLower.endsWith(".ogg") ||
+      dataLower.includes(".mp4?") ||
+      dataLower.includes(".webm?") ||
+      dataLower.includes(".ogg?")) {
     
-    // Es un video (MP4, WebM, OGG o data URL de video)
     const video = document.createElement("video");
     video.src = bgData;
     video.autoplay = true;
     video.loop = true;
     video.muted = true;
-    video.playsInline = true; // Importante para móviles
+    video.playsInline = true;
     video.style.width = "100%";
     video.style.height = "100%";
     video.style.objectFit = "cover";
+    video.style.position = "absolute";
+    video.style.top = "0";
+    video.style.left = "0";
     bgContainer.appendChild(video);
     
-  } else if (bgData.startsWith("data:image") || 
-             bgData.includes(".gif") || 
-             bgData.includes(".jpg") || 
-             bgData.includes(".jpeg") || 
-             bgData.includes(".png") || 
-             bgData.includes(".webp")) {
+    console.log("✅ ECS:R Pro - Video aplicado");
     
-    // Es una imagen (GIF, JPG, PNG, WebP o data URL de imagen)
-    bgContainer.style.backgroundImage = `url(${bgData})`;
+  // 2️⃣ Detectar GIFs animados
+  } else if (dataLower.startsWith("data:image/gif") || 
+             dataLower.endsWith(".gif") ||
+             dataLower.includes(".gif?")) {
+    
+    const img = document.createElement("img");
+    img.src = bgData;
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.position = "absolute";
+    img.style.top = "0";
+    img.style.left = "0";
+    bgContainer.appendChild(img);
+    
+    console.log("✅ ECS:R Pro - GIF aplicado");
+    
+  // 3️⃣ Imágenes estáticas (JPG, PNG, WebP)
+  } else if (dataLower.startsWith("data:image") || 
+             dataLower.endsWith(".jpg") || 
+             dataLower.endsWith(".jpeg") || 
+             dataLower.endsWith(".png") || 
+             dataLower.endsWith(".webp") ||
+             dataLower.includes(".jpg?") ||
+             dataLower.includes(".jpeg?") ||
+             dataLower.includes(".png?") ||
+             dataLower.includes(".webp?")) {
+    
+    bgContainer.style.backgroundImage = `url("${bgData}")`;
     bgContainer.style.backgroundSize = "cover";
     bgContainer.style.backgroundPosition = "center";
     bgContainer.style.backgroundRepeat = "no-repeat";
+    
+    console.log("✅ ECS:R Pro - Imagen estática aplicada");
+    
+  } else {
+    // Fallback: intentar como imagen
+    bgContainer.style.backgroundImage = `url("${bgData}")`;
+    bgContainer.style.backgroundSize = "cover";
+    bgContainer.style.backgroundPosition = "center";
+    bgContainer.style.backgroundRepeat = "no-repeat";
+    
+    console.warn("⚠️ ECS:R Pro - Tipo desconocido, aplicado como imagen");
   }
 }
 
-// 🔹 Aplicar fondo inicial
+// 🔹 Aplicar fondo inicial (revisar sync y local)
 chrome.storage.sync.get("background", (data) => {
-  applyBackground(data.background);
+  if (data.background) {
+    console.log("🔄 ECS:R Pro - Cargando fondo desde sync storage");
+    applyBackground(data.background);
+  } else {
+    // Si no está en sync, buscar en local
+    chrome.storage.local.get("background", (localData) => {
+      if (localData.background) {
+        console.log("🔄 ECS:R Pro - Cargando fondo desde local storage");
+        applyBackground(localData.background);
+      }
+    });
+  }
 });
 
-// 🔹 Escuchar cambios en tiempo real
+// 🔹 Escuchar cambios en tiempo real (ambos storages)
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "sync" && changes.background) {
+  if ((area === "sync" || area === "local") && changes.background) {
+    console.log("🔄 ECS:R Pro - Fondo actualizado en tiempo real desde", area);
     applyBackground(changes.background.newValue);
   }
 });
