@@ -20,13 +20,18 @@ if (!bgContainer) {
 
 // 🔹 Función para aplicar fondo - MEJORADA
 function applyBackground(bgData) {
-  if (!bgData) return;
-
-  // Limpiar fondo anterior
+  // 🗑️ SIEMPRE limpiar fondo anterior primero
   bgContainer.innerHTML = "";
   bgContainer.style.backgroundImage = "";
   bgContainer.style.backgroundSize = "";
   bgContainer.style.backgroundPosition = "";
+  bgContainer.style.backgroundRepeat = "";
+  
+  // Si no hay datos, dejar limpio
+  if (!bgData) {
+    console.log("🧹 ECS:R Pro - Fondo eliminado");
+    return;
+  }
 
   // Normalizar la URL para mejor detección
   const dataLower = bgData.toLowerCase();
