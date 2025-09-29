@@ -4,5 +4,5 @@
 
 Choose your language:
 
-- [English](docs/en/README.md)
-- [Español](docs/es/README.md)
+[![English](https://img.shields.io/badge/English-Read-blue?style=for-the-badge)](docs/en/README.md)
+[![Español](https://img.shields.io/badge/Español-Leer-red?style=for-the-badge)](docs/es/README.md)
