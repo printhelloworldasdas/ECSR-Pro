@@ -18,7 +18,7 @@ if (!bgContainer) {
   document.body.prepend(bgContainer);
 }
 
-// 🔹 Función para aplicar fondo
+// 🔹 Función para aplicar fondo - CORREGIDA
 function applyBackground(bgData) {
   if (!bgData) return;
 
@@ -28,17 +28,32 @@ function applyBackground(bgData) {
   bgContainer.style.backgroundSize = "";
   bgContainer.style.backgroundPosition = "";
 
-  if (bgData.startsWith("data:video")) {
+  // Detectar tipo de archivo
+  if (bgData.startsWith("data:video") || 
+      bgData.includes(".mp4") || 
+      bgData.includes(".webm") || 
+      bgData.includes(".ogg")) {
+    
+    // Es un video (MP4, WebM, OGG o data URL de video)
     const video = document.createElement("video");
     video.src = bgData;
     video.autoplay = true;
     video.loop = true;
     video.muted = true;
+    video.playsInline = true; // Importante para móviles
     video.style.width = "100%";
     video.style.height = "100%";
     video.style.objectFit = "cover";
     bgContainer.appendChild(video);
-  } else if (bgData.startsWith("data:image")) {
+    
+  } else if (bgData.startsWith("data:image") || 
+             bgData.includes(".gif") || 
+             bgData.includes(".jpg") || 
+             bgData.includes(".jpeg") || 
+             bgData.includes(".png") || 
+             bgData.includes(".webp")) {
+    
+    // Es una imagen (GIF, JPG, PNG, WebP o data URL de imagen)
     bgContainer.style.backgroundImage = `url(${bgData})`;
     bgContainer.style.backgroundSize = "cover";
     bgContainer.style.backgroundPosition = "center";
