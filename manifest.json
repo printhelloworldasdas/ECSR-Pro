@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ECS:R Pro",
   "version": "1.0",
-  "description": "Mejoras para ECSR: fondos personalizados y Discord en perfiles.",
+  "description": "Like RoPro but for ECS:R whit custom background discord and more for come.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -26,3 +26,4 @@
     }
   ]
 }
+
